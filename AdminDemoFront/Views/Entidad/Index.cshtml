@@ -1,0 +1,139 @@
+﻿@model List<Entidad>
+@{
+    ViewData["Title"] = "Entidades";
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header pb-0">
+                <h6>Lista de Entidades</h6>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createEntidadModal">Nueva Entidad</button>
+            </div>
+            @if (Model.Any())
+            {
+                <div class="card-body px-0 pt-0 pb-2">
+                    <div class="table-responsive p-0">
+                        <table class="table align-items-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nombre</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Teléfono</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Dirección</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Email</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Estado</th>
+                                    <th class="text-secondary opacity-7"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var entidad in Model)
+                                {
+                                    <tr>
+                                        <td class="align-middle">
+                                            <span class="text-secondary text-xs font-weight-bold">@entidad.NombreEntidad</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-secondary text-xs font-weight-bold">@entidad.Telefono</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-secondary text-xs font-weight-bold">@entidad.Direccion</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-secondary text-xs font-weight-bold">@entidad.Email</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-secondary text-xs font-weight-bold">@(entidad.Estado ? "Activo" : "Inactivo")</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-bs-toggle="modal" data-bs-target="#editEntidadModal" onclick="openEditEntidadModal(@entidad.IdEntidad, '@entidad.NombreEntidad', '@entidad.Telefono', '@entidad.Direccion', '@entidad.Email', @entidad.Estado)">
+                                                Edit
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<!-- Modal para Crear Entidad -->
+<div class="modal fade" id="createEntidadModal" tabindex="-1" aria-labelledby="createEntidadModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createEntidadModalLabel">Crear Entidad</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createEntidadForm">
+                    <div class="mb-3">
+                        <label for="createNombreEntidad" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="createNombreEntidad" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="createTelefono" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="createTelefono" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="createDireccion" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="createDireccion" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="createEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="createEmail" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="createEstado" class="form-label">Estado</label>
+                        <select class="form-control" id="createEstado" required>
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="createEntidadButton">Crear</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('createEntidadButton').addEventListener('click', function () {
+        const nombreEntidad = document.getElementById('createNombreEntidad').value;
+        const telefono = document.getElementById('createTelefono').value;
+        const direccion = document.getElementById('createDireccion').value;
+        const email = document.getElementById('createEmail').value;
+        const estado = document.getElementById('createEstado').value === 'true';
+
+        const newEntidad = {
+            NombreEntidad: nombreEntidad,
+            Telefono: telefono,
+            Direccion: direccion,
+            Email: email,
+            Estado: estado
+        };
+
+        // Llamar a la API para crear la entidad
+        fetch('/Entidad/Create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newEntidad)
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Entidad creada correctamente.');
+                    location.reload(); // Recargar la página
+                } else {
+                    response.text().then(text => alert(`Error: ${text}`));
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>

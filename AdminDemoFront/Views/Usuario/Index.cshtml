@@ -1,0 +1,273 @@
+﻿@{
+    ViewData["Title"] = "Usuarios";
+}
+@model List<Usuarios>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header pb-0">
+                <div class="card-header pb-0 d-flex justify-content-between align-items-center">
+                    <h6>Lista de Usuarios</h6>
+                </div>
+                <div class="text-end">
+                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createUsuarioModal">Nuevo Usuario</button>
+                </div>
+            </div>
+            @if (Model.Any())
+            {
+                <div class="card-body px-0 pt-0 pb-2">
+                    <div class="table-responsive p-0">
+                        <table class="table align-items-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nombre Completo</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Documento</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Email</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Dirección</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Teléfono</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Estado</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Perfil</th>
+                                    <th class="text-secondary opacity-7"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var usuario in Model)
+                                {
+                                    <tr>
+                                        <td class="align-middle">
+                                            <span class="text-secondary text-xs font-weight-bold">@($"{usuario.Nombres} {usuario.Apellidos}")</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-secondary text-xs font-weight-bold">@usuario.Documento</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-secondary text-xs font-weight-bold">@usuario.Email</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-secondary text-xs font-weight-bold">@usuario.Direccion</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-secondary text-xs font-weight-bold">@usuario.Telefono</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-secondary text-xs font-weight-bold">@(usuario.Estado ? "Activo" : "Inactivo")</span>
+                                        </td>
+                                        <td>
+                                            <span class="text-secondary text-xs font-weight-bold">@usuario.Perfil</span>
+                                        </td>
+                                        <td class="align-middle">
+                                            <a href="javascript:;" class="text-secondary font-weight-bold text-xs" data-bs-toggle="modal" data-bs-target="#editUsuarioModal" onclick="openEditUsuarioModal(@usuario.IdUsuario, '@usuario.Nombres', '@usuario.Apellidos', '@usuario.Documento', '@usuario.Email', '@usuario.Direccion', '@usuario.Telefono', @(usuario.Estado.ToString().ToLower()), @usuario.Perfil)">
+                                                Edit
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Usuario -->
+<div class="modal fade" id="editUsuarioModal" tabindex="-1" aria-labelledby="editUsuarioModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUsuarioModalLabel">Editar Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editUsuarioForm">
+                    <input type="hidden" id="editIdUsuario" />
+                    <div class="mb-3">
+                        <label for="editNombres" class="form-label">Nombres</label>
+                        <input type="text" class="form-control" id="editNombres" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editApellidos" class="form-label">Apellidos</label>
+                        <input type="text" class="form-control" id="editApellidos" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDocumento" class="form-label">Documento</label>
+                        <input type="text" class="form-control" id="editDocumento" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="editEmail" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDireccion" class="form-label">Dirección</label>
+                        <input type="text" class="form-control" id="editDireccion" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTelefono" class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" id="editTelefono" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editEstado" class="form-label">Estado</label>
+                        <select class="form-control" id="editEstado">
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPerfil" class="form-label">Perfil</label>
+                        <input type="text" class="form-control" id="editPerfil" />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="saveChangesButton">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Crear Usuario -->
+<div class="modal fade" id="createUsuarioModal" tabindex="-1" aria-labelledby="createUsuarioModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createUsuarioModalLabel">Crear Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createUsuarioForm">
+                    <div class="mb-3">
+                        <label for="createDocumento" class="form-label">Documento</label>
+                        <input type="text" class="form-control" id="createDocumento" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="createNombres" class="form-label">Nombres</label>
+                        <input type="text" class="form-control" id="createNombres" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="createApellidos" class="form-label">Apellidos</label>
+                        <input type="text" class="form-control" id="createApellidos" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="createEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="createEmail" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="createUsuario" class="form-label">Usuario</label>
+                        <input type="text" class="form-control" id="createUsuario" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="createPassword" class="form-label">Contraseña</label>
+                        <input type="password" class="form-control" id="createPassword" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="createEstado" class="form-label">Estado</label>
+                        <select class="form-control" id="createEstado" required>
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="createUsuarioButton">Crear</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openEditUsuarioModal(id, nombres, apellidos, documento, email, direccion, telefono, estado, perfil) {
+        document.getElementById('editIdUsuario').value = id;
+        document.getElementById('editNombres').value = nombres;
+        document.getElementById('editApellidos').value = apellidos;
+        document.getElementById('editDocumento').value = documento;
+        document.getElementById('editEmail').value = email;
+        document.getElementById('editDireccion').value = direccion;
+        document.getElementById('editTelefono').value = telefono;
+        document.getElementById('editEstado').value = estado.toString();
+        document.getElementById('editPerfil').value = perfil;
+    }
+
+    document.getElementById('saveChangesButton').addEventListener('click', function () {
+        const idUsuario = document.getElementById('editIdUsuario').value;
+        const nombres = document.getElementById('editNombres').value;
+        const apellidos = document.getElementById('editApellidos').value;
+        const documento = document.getElementById('editDocumento').value;
+        const email = document.getElementById('editEmail').value;
+        const direccion = document.getElementById('editDireccion').value;
+        const telefono = document.getElementById('editTelefono').value;
+        const estado = document.getElementById('editEstado').value === 'true';
+        const perfil = document.getElementById('editPerfil').value;
+
+        const updatedUsuario = {
+            IdUsuario: idUsuario,
+            Nombres: nombres,
+            Apellidos: apellidos,
+            Documento: documento,
+            Email: email,
+            Direccion: direccion,
+            Telefono: telefono,
+            Estado: estado,
+            Perfil: perfil
+        };
+
+        fetch('/Usuario/Edit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedUsuario)
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Usuario actualizado correctamente.');
+                    location.reload();
+                } else {
+                    alert('Error al actualizar el usuario.');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
+    document.getElementById('createUsuarioButton').addEventListener('click', function () {
+        const documento = document.getElementById('createDocumento').value;
+        const nombres = document.getElementById('createNombres').value;
+        const apellidos = document.getElementById('createApellidos').value;
+        const email = document.getElementById('createEmail').value;
+        const usuario = document.getElementById('createUsuario').value;
+        const password = document.getElementById('createPassword').value;
+        const estado = document.getElementById('createEstado').value === 'true';
+
+        const newUsuario = {
+            Documento: documento,
+            Nombres: nombres,
+            Apellidos: apellidos,
+            Email: email,
+            Usuario: usuario,
+            Password: password,
+            Estado: estado,
+            Token: "",
+            callback: ""
+        };
+
+        // Llamar a la API para crear el usuario
+        fetch('/Usuario/Create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newUsuario)
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('Usuario creado correctamente.');
+                    location.reload(); // Recargar la página
+                } else {
+                    response.text().then(text => alert(`Error: ${text}`));
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+</script>
